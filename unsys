@@ -1,0 +1,81 @@
+#!/bin/bash
+BACKUP_PATH=~/.cache/unsys 
+
+mutil_select(){
+	fzf -m --prompt=$1
+}
+
+confirm() {
+	read -r -p "${1:-Are you sure? [y/N]} " response
+	case "$response" in
+		[yY][eE][sS]|[yY]) 
+			true
+			;;
+		*)
+			false
+			;;
+	esac
+}
+
+print_help() {
+   echo "Syntax: unsys -[u|i]"
+   echo
+   echo "Options:"
+   echo "u     Uninstall apps"
+   echo "i     Reinstall apps uninstalled"
+   echo "h     Print this Help"
+   echo
+}
+
+uninstall() {
+	APPS=($(adb shell pm list package | mutil_select "Uninstall: " | sed -e "s/package://"))
+	(( ${#APPS[@]} == 0 )) && exit
+
+	echo "Unintsall app:"
+	printf "\t\t%s\n" ${APPS[@]}
+	echo 
+	confirm "Are you sure[y/N]:" && 
+	printf "%s\n" ${APPS[@]} > $BACKUP_PATH
+
+	for app in "${APPS[@]}"
+	do
+		adb shell pm uninstall --user 0 $app &> /dev/null && echo "✓ Uninstalled $app"
+	done
+
+}
+
+reinstall() {
+	[ ! -s $BACKUP_PATH ] && echo "Reinstall: Have no app uninstalled by unsys" && exit
+
+	APPS=($(cat $BACKUP_PATH | mutil_select "ReInstall: "))
+	echo "Reinstall app:"
+	printf "\t\t%s\n" ${APPS[@]}
+	echo 
+	confirm "Are you sure[y/N]:" && 
+
+	for app in "${APPS[@]}"
+	do
+		adb shell cmd package install-existing $app &> /dev/null && echo "✓ Reinstalled $app" &&
+		sed -i "/${app}/d" $BACKUP_PATH
+	done
+
+}
+
+check_dependencies() {
+	[[ `command -v adb` && `command -v fzf` ]] && return 0
+
+	[[ `command -v adb` ]] && echo "Require adb(Android Debug Bridge)\n"	
+	[[ `command -v fzf` ]] && echo "Require fzf(https://github.com/junegunn/fzf)\n"	
+
+	exit
+}
+
+run() {
+	case $1 in
+	  -u) uninstall ;;
+	  -i) reinstall ;;
+	  *)  print_help ;;
+	esac
+}
+
+check_dependencies && run $1
