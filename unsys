@@ -22,7 +22,7 @@ print_help() {
    echo
    echo "Options:"
    echo "u     Uninstall apps"
-   echo "i     Reinstall apps uninstalled"
+   echo "i     Reinstall apps"
    echo "h     Print this Help"
    echo
 }
