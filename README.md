@@ -3,7 +3,7 @@
     <img src="./gif/demo.gif" alt="Material Bread logo">
 </p>
 
-<h1 align="center" >Script unistall multi Android apps</h1>
+<h1 align="center" >Script uninstall multi Android apps</h1>
 
 # Features
 - uninstall systems app without root
