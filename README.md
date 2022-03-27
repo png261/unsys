@@ -1,6 +1,13 @@
-![demo](./gif/demo.gif)
 
-<b style="text-align: center">Script unistall mutil Android apps</b>
+<p align="center">
+    <img src="./gif/demo.gif" alt="Material Bread logo">
+</p>
+
+<h1 align="center" >Script unistall mutil Android apps</h1>
+
+# Features
+- uninstall systems app without root
+- reinstall app uninstalled by unsys
 
 # Dependencies:
 - adb (Android Debug Bridge)
@@ -8,7 +15,7 @@
 
 # Usage
 ```
-  Syntax: unsys -[u|i]
+  Syntax: ./unsys -[u|i]
 
   Options:
   u     Uninstall apps
