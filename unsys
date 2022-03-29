@@ -61,6 +61,7 @@ reinstall() {
 
 }
 
+
 check_dependencies() {
 	[[ `command -v adb` && `command -v fzf` ]] && return 0
 
@@ -68,6 +69,13 @@ check_dependencies() {
 	[[ `command -v fzf` ]] && echo "Require fzf(https://github.com/junegunn/fzf)\n"	
 
 	exit
+}
+
+check_connect() {
+	adb get-state 1>/dev/null 2>&1 && return 0
+
+	echo 'No device attached'
+	exit 
 }
 
 run() {
@@ -78,4 +86,6 @@ run() {
 	esac
 }
 
-check_dependencies && run $1
+check_dependencies 
+check_connect
+run $1
